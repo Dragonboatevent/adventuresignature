@@ -1,4 +1,3 @@
-﻿
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -407,6 +406,27 @@
             font-weight: 600;
         }
  
+        /* ✅ NEW: "Others" text input styling */
+        .others-input {
+            display: none;
+            margin-top: 10px;
+        }
+ 
+        .others-input input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #d4af37;
+            border-radius: 5px;
+            font-size: 14px;
+            background: #fffef8;
+        }
+ 
+        .others-input input:focus {
+            outline: none;
+            border-color: #c19b2b;
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+        }
+ 
         .submit-btn {
             width: 100%;
             padding: 18px;
@@ -588,7 +608,7 @@
     <section id="features" class="features-section">
         <div class="features-container">
             <h2 class="section-title">Why Choose Our Program</h2>
-           
+ 
             <div class="features-grid">
                 <div class="feature-card">
                     <div class="feature-icon">🤝</div>
@@ -710,7 +730,12 @@
                                 <option value="Friends">Friends</option>
                                 <option value="Social Media">Social Media</option>
                                 <option value="Event Kaki">Event Kaki</option>
+                                <option value="Others">Others</option>
                             </select>
+                            <!-- ✅ NEW: "Others" text input -->
+                            <div id="othersInput" class="others-input">
+                                <input type="text" id="referralOthers" name="referralOthers" placeholder="Please specify...">
+                            </div>
                         </div>
                     </div>
  
@@ -797,11 +822,26 @@
  
     <script>
         // ✅ Configuration - Replace with your Google Apps Script URL
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwONE-ZSlFUBtIy_9Zz8SLgPX4qVqMRpMn3po2HjaMWt1QTqEIXkYVrP7vDXr7umFPmiQ/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyqdYfujje5A9YCly6R9T_XmPX6lCZKhVqVhIU95QXPH_VzWcMThVEV8LDyLpN-0_3Vog/exec';
  
-        // ✅ Set minimum date to today
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('preferredDate').setAttribute('min', today);
+        // ✅ FIXED: Set minimum date to tomorrow (not today)
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const minDate = tomorrow.toISOString().split('T')[0];
+        document.getElementById('preferredDate').setAttribute('min', minDate);
+ 
+        // ✅ NEW: Show/hide "Others" text input based on referral source selection
+        document.getElementById('referralSource').addEventListener('change', function() {
+            const othersInput = document.getElementById('othersInput');
+            if (this.value === 'Others') {
+                othersInput.style.display = 'block';
+                document.getElementById('referralOthers').required = true;
+            } else {
+                othersInput.style.display = 'none';
+                document.getElementById('referralOthers').required = false;
+                document.getElementById('referralOthers').value = '';
+            }
+        });
  
         // ✅ Form submission
         document.getElementById('quotationForm').addEventListener('submit', async function(e) {
@@ -837,16 +877,16 @@
                 return;
             }
  
-            // Check if date is not in the past
+            // ✅ FIXED: Check if date is at least tomorrow
             const selectedDate = new Date(preferredDate);
-            const todayDate = new Date(today);
-            if (selectedDate < todayDate) {
-                showMessage('❌ Preferred date cannot be in the past.', 'error');
+            const todayDate = new Date();
+            todayDate.setHours(0, 0, 0, 0); // Reset time to midnight
+           
+            if (selectedDate <= todayDate) {
+                showMessage('❌ Preferred date must be at least tomorrow or later.', 'error');
                 document.getElementById('preferredDate').focus();
                 return;
             }
- 
-            // ✅ Key objectives validation removed - now optional
  
             // Show loading
             submitBtn.disabled = true;
@@ -855,25 +895,37 @@
  
             // Collect form data
             const formData = new FormData(this);
-           
+ 
             // Get selected additional services
             const selectedServices = [];
             document.querySelectorAll('input[name="additionalServices"]:checked').forEach(checkbox => {
                 selectedServices.push(checkbox.value);
             });
-           
+ 
             // Get selected key objectives
             const objectives = [];
             document.querySelectorAll('input[name="keyObjectives"]:checked').forEach(checkbox => {
                 objectives.push(checkbox.value);
             });
-           
+ 
+            // ✅ NEW: Handle referral source with "Others" option
+            let referralSource = document.getElementById('referralSource').value;
+            if (referralSource === 'Others') {
+                const othersText = document.getElementById('referralOthers').value.trim();
+                if (othersText) {
+                    referralSource = 'Others: ' + othersText;
+                }
+            }
+ 
             // Remove individual checkbox values and add as comma-separated strings
             formData.delete('additionalServices');
             formData.delete('keyObjectives');
+            formData.delete('referralSource');
+            formData.delete('referralOthers');
+           
             formData.append('additionalServices', selectedServices.join(', ') || 'None');
             formData.append('keyObjectives', objectives.join(', ') || 'None');
-           
+            formData.append('referralSource', referralSource);
             formData.append('action', 'submitQuotation');
  
             console.log('📤 Submitting quotation request...');
@@ -890,6 +942,8 @@
                 if (result === 'Success') {
                     showMessage('✅ Thank you! Your quotation request has been submitted successfully. We will contact you soon.', 'success');
                     this.reset();
+                    // Hide "Others" input after reset
+                    document.getElementById('othersInput').style.display = 'none';
                     // Scroll to message
                     messageDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 } else {
@@ -935,6 +989,3 @@
     </script>
 </body>
 </html>
-
-
-
