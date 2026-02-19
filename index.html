@@ -377,7 +377,7 @@
             gap: 20px;
         }
 
-        /* Checkbox Styles */
+        /* ✅ FIXED: Checkbox Styles */
         .checkbox-group {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -392,8 +392,8 @@
             border: 2px solid #e0e0e0;
             border-radius: 5px;
             transition: all 0.3s ease;
-            cursor: pointer;
             background: white;
+            position: relative;
         }
 
         .checkbox-item:hover {
@@ -401,12 +401,14 @@
             background: #fffef8;
         }
 
+        /* ✅ FIXED: Make entire checkbox-item clickable */
         .checkbox-item input[type="checkbox"] {
             width: 20px;
             height: 20px;
             margin-right: 10px;
             cursor: pointer;
             accent-color: #d4af37;
+            flex-shrink: 0;
         }
 
         .checkbox-item label {
@@ -416,11 +418,18 @@
             font-size: 14px;
             color: #333;
             flex: 1;
+            user-select: none;
         }
 
-        .checkbox-item input[type="checkbox"]:checked + label {
+        .checkbox-item input[type="checkbox"]:checked ~ label {
             color: #1a1a1a;
             font-weight: 600;
+        }
+
+        /* ✅ FIXED: Highlight checked items */
+        .checkbox-item:has(input[type="checkbox"]:checked) {
+            border-color: #d4af37;
+            background: #fffef8;
         }
 
         /* "Others" text input styling */
@@ -790,30 +799,30 @@
                         <label>Additional Services</label>
                         <small>Select any additional services you're interested in (optional)</small>
                         <div class="checkbox-group">
-                            <div class="checkbox-item">
+                            <label class="checkbox-item">
                                 <input type="checkbox" id="service1" name="additionalServices" value="Customized Event T-shirt">
-                                <label for="service1">Customized Event T-shirt</label>
-                            </div>
-                            <div class="checkbox-item">
+                                <span>Customized Event T-shirt</span>
+                            </label>
+                            <label class="checkbox-item">
                                 <input type="checkbox" id="service2" name="additionalServices" value="Hydrating Station">
-                                <label for="service2">Hydrating Station</label>
-                            </div>
-                            <div class="checkbox-item">
+                                <span>Hydrating Station</span>
+                            </label>
+                            <label class="checkbox-item">
                                 <input type="checkbox" id="service3" name="additionalServices" value="Transportation Service">
-                                <label for="service3">Transportation Service</label>
-                            </div>
-                            <div class="checkbox-item">
+                                <span>Transportation Service</span>
+                            </label>
+                            <label class="checkbox-item">
                                 <input type="checkbox" id="service4" name="additionalServices" value="Trophies/Medals">
-                                <label for="service4">Trophies/Medals</label>
-                            </div>
-                            <div class="checkbox-item">
+                                <span>Trophies/Medals</span>
+                            </label>
+                            <label class="checkbox-item">
                                 <input type="checkbox" id="service5" name="additionalServices" value="Safety Boat">
-                                <label for="service5">Safety Boat</label>
-                            </div>
-                            <div class="checkbox-item">
+                                <span>Safety Boat</span>
+                            </label>
+                            <label class="checkbox-item">
                                 <input type="checkbox" id="service6" name="additionalServices" value="Event Photography">
-                                <label for="service6">Event Photography</label>
-                            </div>
+                                <span>Event Photography</span>
+                            </label>
                         </div>
                     </div>
 
@@ -821,22 +830,22 @@
                         <label>Key Objectives (Select all that apply)</label>
                         <small>What are your main goals for this event? (optional)</small>
                         <div class="checkbox-group">
-                            <div class="checkbox-item">
+                            <label class="checkbox-item">
                                 <input type="checkbox" id="objective1" name="keyObjectives" value="Team Bonding">
-                                <label for="objective1">Team Bonding</label>
-                            </div>
-                            <div class="checkbox-item">
+                                <span>Team Bonding</span>
+                            </label>
+                            <label class="checkbox-item">
                                 <input type="checkbox" id="objective2" name="keyObjectives" value="Communication">
-                                <label for="objective2">Communication</label>
-                            </div>
-                            <div class="checkbox-item">
+                                <span>Communication</span>
+                            </label>
+                            <label class="checkbox-item">
                                 <input type="checkbox" id="objective3" name="keyObjectives" value="Leadership">
-                                <label for="objective3">Leadership</label>
-                            </div>
-                            <div class="checkbox-item">
+                                <span>Leadership</span>
+                            </label>
+                            <label class="checkbox-item">
                                 <input type="checkbox" id="objective4" name="keyObjectives" value="Onboarding/Orientation">
-                                <label for="objective4">Onboarding/Orientation</label>
-                            </div>
+                                <span>Onboarding/Orientation</span>
+                            </label>
                         </div>
                     </div>
 
@@ -1036,4 +1045,3 @@
     </script>
 </body>
 </html>
-
