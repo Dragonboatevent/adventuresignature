@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://dragonboatevent.github.io/adventuresignature/sitemap.xml
